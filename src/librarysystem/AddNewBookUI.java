@@ -110,7 +110,7 @@ public class AddNewBookUI extends JPanel{
 			DataAccess da = new DataAccessFacade();
 			var nB = new Book(isbn, title, cLen, aList);
 			da.saveNewBook(nB);
-			errorField.setText(nB.getTitle() + "Book saved successfully!");
+			errorField.setText(nB.getTitle() + " saved successfully!");
 		});
 
 		buttonPanel.add(button);

@@ -8,7 +8,11 @@ import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.TextArea;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -145,6 +149,31 @@ public class AllBooks extends JPanel {
         }
         detailArea.append("Max Checkout Duration: " + book.getMaxCheckoutLength() + "\n");
         detailArea.append("Number of copies: " + book.getCopyNums().size() + "\n");
+
+        DataAccess da = new DataAccessFacade();
+        Collection<LibraryMember> members = da.readMemberMap().values();
+        List<LibraryMember> mems = new ArrayList<>(members);
+        List<LibraryMember> membersWhoCheckedOut = mems.stream()
+                .filter(member -> member.getCheckouts().stream()
+                        .anyMatch(checkout -> checkout.getIsbn().equals(isbn)))
+                .toList();
+        List<String> records = new ArrayList<>();
+        records.add("Member ID \t Due Dates");
+
+        for (LibraryMember member : membersWhoCheckedOut) {
+            String memberID = member.getMemberId();
+             String dueDates = member.getCheckouts().stream()
+                    .filter(checkout -> checkout.getIsbn().equals(isbn))
+                    .map(CheckoutRecord::getDueDateAsString)
+                    .collect(Collectors.joining(", "));
+             records.add(memberID + "\t" + dueDates);
+        }
+
+        if (records.size() > 1) {
+            String result = String.join("\n", records);
+            detailArea.append(result + "\n");
+        }
+
 
         detailField.setText(detailArea.getText());
     }
