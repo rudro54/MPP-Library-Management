@@ -24,4 +24,7 @@ public class CheckoutRecord implements Serializable{
 	public String getDueDateAsString() {
 		return dDate.toString();
 	}
+	public LocalDate getDueDate() {
+		return dDate;
+	}
 }
